@@ -52,6 +52,11 @@
   color: hsla(0, 0%, 100%, 0.8);
 }
 
+.itemImage {
+  border-radius: 0.5rem;
+  object-fit: contain;
+}
+
 .orderDetail h1 {
   font-size: 1.5rem;
   font-weight: 500;

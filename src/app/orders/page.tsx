@@ -3,8 +3,15 @@ import Image from 'next/image';
 import Layout from '@/components/layout';
 import Breadcrumb from '@/components/breadcrumb';
 import styles from '@/styles/orders.module.css';
+import {getOrders} from '@/api';
+import {getStatusColor} from '@/helpers';
+import DeleteOrder from '@/components/delete-order';
 
-export default function Orders() {
+export const revalidate = 0;
+
+export default async function Orders() {
+  const orders = await getOrders();
+
   return (
     <Layout breadcrumb={<Breadcrumb items={[{label: 'Orders'}]} />}>
       <div className={styles.header}>
@@ -23,57 +30,48 @@ export default function Orders() {
             <th>Status</th>
             <th>Total</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>123456</td>
-            <td>Apple MacBook Pro 13-inch</td>
-            <td>10</td>
-            <td>
-              <div className={`${styles.status} ${styles.completed}`}>
-                Completed
-              </div>
-            </td>
-            <td className={styles.bold}>$3000</td>
-            <td>
-              <Link href="/orders/123456" className={styles.view}>
-                <Image src="/eye.svg" alt="view" width={18} height={18} />
-              </Link>
-            </td>
-          </tr>
-          <tr>
-            <td>123457</td>
-            <td>Samsung Galaxy S21</td>
-            <td>5</td>
-            <td>
-              <div className={`${styles.status} ${styles.shipped}`}>
-                shipped
-              </div>
-            </td>
-            <td className={styles.bold}>$4000</td>
-            <td>
-              <Link href="/orders/123456" className={styles.view}>
-                <Image src="/eye.svg" alt="view" width={18} height={18} />
-              </Link>
-            </td>
-          </tr>
-          <tr>
-            <td>123458</td>
-            <td>Office Chair</td>
-            <td>20</td>
-            <td>
-              <div className={`${styles.status} ${styles.pending}`}>
-                Pending
-              </div>
-            </td>
-            <td className={styles.bold}>$1000</td>
-            <td>
-              <Link href="/orders/123456" className={styles.view}>
-                <Image src="/eye.svg" alt="view" width={18} height={18} />
-              </Link>
-            </td>
-          </tr>
+          {orders.orders.map(order => (
+            <tr key={order.id}>
+              <td>{order.id}</td>
+              <td>
+                {order.items.map((item, index) => (
+                  <span key={item.id}>
+                    {item.name} ({item.quantity})
+                    {index < order.items.length - 1 && ', '}
+                  </span>
+                ))}
+              </td>
+              <td>
+                {order.items.reduce((acc, item) => acc + item.quantity, 0)}
+              </td>
+              <td>
+                <div
+                  className={`${styles.status} ${getStatusColor(order.status)}`}
+                >
+                  {order.status}
+                </div>
+              </td>
+              <td className={styles.bold}>
+                ${order.totalAmount?.toLocaleString()}
+              </td>
+              <td>
+                <Link
+                  title="View order details"
+                  href={`/orders/${order.id}`}
+                  className={styles.view}
+                >
+                  <Image src="/eye.svg" alt="view" width={18} height={18} />
+                </Link>
+              </td>
+              <td>
+                <DeleteOrder id={order.id} />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </Layout>

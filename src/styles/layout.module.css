@@ -58,6 +58,28 @@
   align-items: center;
 }
 
+.user {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.notification {
+  position: relative;
+  display: flex;
+}
+
+.notificationDot {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 1000px;
+  right: 0;
+  top: 0;
+  background: hsla(283, 87%, 62%, 0.8);
+}
+
 .main {
   padding: 1rem 1.5rem;
   margin-top: 8px;

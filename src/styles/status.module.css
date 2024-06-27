@@ -1,0 +1,19 @@
+.pending {
+  width: fit-content;
+  background: hsla(0, 0%, 100%, 0.1);
+}
+
+.shipped {
+  width: fit-content;
+  background: hsla(49, 88%, 28%, 0.8);
+}
+
+.completed {
+  width: fit-content;
+  background: hsla(120, 96%, 19%, 0.8);
+}
+
+.cancelled {
+  width: fit-content;
+  background: hsla(0, 90%, 28%, 0.8);
+}

@@ -78,6 +78,11 @@
   background-size: 1rem;
 }
 
+.error {
+  color: hsl(0, 92%, 64%);
+  font-size: 0.8125rem;
+}
+
 .formGroup {
   display: flex;
   flex-direction: column;
@@ -184,6 +189,13 @@
   font-size: 1rem;
 }
 
+.removeButton {
+  background: none;
+  border: none;
+  color: hsla(0, 0%, 100%, 0.8);
+  cursor: pointer;
+}
+
 .deleteOrderButton {
   border: none;
   background: none;
@@ -195,4 +207,22 @@
 .cancelOrderButton {
   font-size: 0.875rem;
   color: hsla(0, 0%, 100%, 0.8);
+}
+
+/* hacks to prevent the date picker from jumping around */
+.datePicker input {
+  width: 100%;
+}
+
+.datePickerLabel {
+  position: relative;
+  gap: 0;
+}
+
+.datePickerLabel span {
+  margin-bottom: 8px;
+}
+
+.datePickerError {
+  margin-top: 8px;
 }

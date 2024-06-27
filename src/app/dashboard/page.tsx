@@ -1,28 +1,43 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import {format} from 'date-fns';
 import Layout from '@/components/layout';
 import Breadcrumb from '@/components/breadcrumb';
 import styles from '@/styles/dashboard.module.css';
+import {getNotifications, getOrders, getSummary} from '@/api';
+import {getStatusColor} from '@/helpers';
+import {NotificationStatusFilter, OrderStatusFilter} from '@/components/tabs';
+import NotificationItems from '@/components/notification';
 
-export default function Dashboard() {
+export const revalidate = 0;
+
+export default async function Dashboard({
+  searchParams: {order, notification},
+}: {
+  searchParams: {order: string | null; notification: string | null};
+}) {
+  const summary = await getSummary();
+  const orders = await getOrders({status: order});
+  const notifications = await getNotifications({status: notification});
+
   return (
     <Layout breadcrumb={<Breadcrumb items={[{label: 'Dashboard'}]} />}>
       <section className={styles.cards}>
         <div className={styles.card}>
           <p>Completed Orders</p>
-          <h2>10</h2>
+          <h2>{summary.totalCompletedOrders}</h2>
         </div>
         <div className={styles.card}>
           <p>Active Orders</p>
-          <h2>5</h2>
+          <h2>{summary.totalActiveOrders}</h2>
         </div>
         <div className={styles.card}>
           <p>Revenue</p>
-          <h2>$500</h2>
+          <h2>${summary.totalRevenue.toLocaleString()}</h2>
         </div>
         <div className={styles.card}>
           <p>Customers</p>
-          <h2>10</h2>
+          <h2>{summary.uniqueCustomers}</h2>
         </div>
       </section>
 
@@ -30,177 +45,72 @@ export default function Dashboard() {
         <section className={styles.recentOrders}>
           <p className={styles.recentOrdersTitle}>Recent Orders</p>
 
-          <div className={styles.buttonGroup}>
-            <button className={styles.active}>
-              All <span>10</span>
-            </button>
-            <button>
-              Completed <span>10</span>
-            </button>
-            <button>
-              Active <span>10</span>
-            </button>
-            <button>
-              Not started <span>10</span>
-            </button>
-          </div>
+          <OrderStatusFilter
+            allOrdersLength={summary.totalOrders}
+            completedOrdersLength={summary.totalCompletedOrders}
+            activeOrdersLength={summary.totalActiveOrders}
+            notStartedOrdersLength={summary.totalNotStartedOrders}
+          />
 
           <div className={styles.ordersGroup}>
-            <Link href="/orders/1" className={styles.order}>
-              <div className={styles.productDetails}>
-                <Image
-                  src="https://m.media-amazon.com/images/I/61lsexTCOhL._AC_SX679_.jpg"
-                  alt="product"
-                  width={120}
-                  height={75}
-                  className="rounded-lg"
-                />
-                <div>
-                  <p>Apple MacBook Pro 13-inch</p>
-                  <div className={styles.subDetails}>
-                    <div className={`${styles.status} ${styles.completed}`}>
-                      complete
+            {orders.orders.map(order => (
+              <Link
+                key={order.id}
+                href={`/orders/${order.id}`}
+                className={styles.order}
+              >
+                <div className={styles.productDetails}>
+                  <Image
+                    src={order.items[0].imageUrl}
+                    alt={order.items[0].name}
+                    width={120}
+                    height={75}
+                    className={styles.productImage}
+                  />
+                  <div>
+                    <p>
+                      Order by {order.customerName} on{' '}
+                      {format(new Date(order.createdAt), 'MMM dd, yyyy')}
+                    </p>
+                    <div className={styles.subDetails}>
+                      <div
+                        className={`${styles.status} ${getStatusColor(
+                          order.status,
+                        )}`}
+                      >
+                        {order.status}
+                      </div>
+                      <div className={styles.dot} />
+                      <p>Order #{order.id}</p>
                     </div>
-                    <div className={styles.dot} />
-                    <p>Order #123456</p>
                   </div>
                 </div>
-              </div>
-              <div className={styles.orderDetails}>
-                <p className={styles.orderQuantity}>10 x $300</p>
-                <p className={styles.orderTotal}>$3000</p>
-              </div>
-            </Link>
-            <Link href="/orders/1" className={styles.order}>
-              <div className={styles.productDetails}>
-                <Image
-                  src="https://m.media-amazon.com/images/I/61lsexTCOhL._AC_SX679_.jpg"
-                  alt="product"
-                  width={120}
-                  height={75}
-                  className="rounded-lg"
-                />
-                <div>
-                  <p>Apple MacBook Pro 13-inch</p>
-                  <div className={styles.subDetails}>
-                    <div className={`${styles.status} ${styles.shipped}`}>
-                      shipped
-                    </div>
-                    <div className={styles.dot} />
-                    <p>Order #123456</p>
-                  </div>
+                <div className={styles.orderDetails}>
+                  <p className={styles.orderQuantity}>
+                    {order.items.reduce((acc, item) => acc + item.quantity, 0)}{' '}
+                    items
+                  </p>
+                  <p className={styles.orderTotal}>
+                    ${order.totalAmount.toLocaleString()}
+                  </p>
                 </div>
-              </div>
-              <div className={styles.orderDetails}>
-                <p className={styles.orderQuantity}>10 x $300</p>
-                <p className={styles.orderTotal}>$3000</p>
-              </div>
-            </Link>
-            <Link href="/orders/1" className={styles.order}>
-              <div className={styles.productDetails}>
-                <Image
-                  src="https://m.media-amazon.com/images/I/61lsexTCOhL._AC_SX679_.jpg"
-                  alt="product"
-                  width={120}
-                  height={75}
-                  className="rounded-lg"
-                />
-                <div>
-                  <p>Apple MacBook Pro 13-inch</p>
-                  <div className={styles.subDetails}>
-                    <div className={`${styles.status} ${styles.pending}`}>
-                      pending
-                    </div>
-                    <div className={styles.dot} />
-                    <p>Order #123456</p>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.orderDetails}>
-                <p className={styles.orderQuantity}>10 x $300</p>
-                <p className={styles.orderTotal}>$3000</p>
-              </div>
-            </Link>
-            <Link href="/orders/1" className={styles.order}>
-              <div className={styles.productDetails}>
-                <Image
-                  src="https://m.media-amazon.com/images/I/61lsexTCOhL._AC_SX679_.jpg"
-                  alt="product"
-                  width={120}
-                  height={75}
-                  className="rounded-lg"
-                />
-                <div>
-                  <p>Apple MacBook Pro 13-inch</p>
-                  <div className={styles.subDetails}>
-                    <div className={`${styles.status} ${styles.cancelled}`}>
-                      cancelled
-                    </div>
-                    <div className={styles.dot} />
-                    <p>Order #123456</p>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.orderDetails}>
-                <p className={styles.orderQuantity}>10 x $300</p>
-                <p className={styles.orderTotal}>$3000</p>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </div>
         </section>
 
         <section className={styles.notifications}>
           <p className={styles.notificationTitle}>Notifications</p>
 
-          <div className={styles.buttonGroup}>
-            <button className={styles.active}>
-              All <span>10</span>
-            </button>
-            <button>
-              Unread <span>10</span>
-            </button>
-            <button>
-              Read <span>10</span>
-            </button>
-          </div>
+          <NotificationStatusFilter
+            allNotificationsLength={summary.totalNotifications}
+            unreadNotificationsLength={summary.totalUnreadNotifications}
+            readNotificationsLength={
+              summary.totalNotifications - summary.totalUnreadNotifications
+            }
+          />
 
-          <div className={styles.notificationsGroup}>
-            <button className={`${styles.notification}`}>
-              <div className={styles.notificationDot} />
-              <p className={styles.notificationContent}>
-                Order #123456 has been completed
-              </p>
-              <p className={styles.notificationTime}>2 hours ago</p>
-            </button>
-            <button className={`${styles.notification}`}>
-              <div className={styles.notificationDot} />
-              <p className={styles.notificationContent}>
-                Order #123456 has been completed
-              </p>
-              <p className={styles.notificationTime}>2 hours ago</p>
-            </button>
-            <button className={`${styles.notification}`}>
-              <div className={styles.notificationDot} />
-              <p className={styles.notificationContent}>
-                Order #123456 has been completed
-              </p>
-              <p className={styles.notificationTime}>2 hours ago</p>
-            </button>
-            <button className={`${styles.notification}`}>
-              <div className={styles.notificationDot} />
-              <p className={styles.notificationContent}>
-                Order #123456 has been completed
-              </p>
-              <p className={styles.notificationTime}>2 hours ago</p>
-            </button>
-            <button className={`${styles.notification}`}>
-              <div className={styles.notificationDot} />
-              <p className={styles.notificationContent}>
-                Order #123456 has been completed
-              </p>
-              <p className={styles.notificationTime}>2 hours ago</p>
-            </button>
-          </div>
+          <NotificationItems notifications={notifications} />
         </section>
       </div>
     </Layout>

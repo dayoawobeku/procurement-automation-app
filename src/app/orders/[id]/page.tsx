@@ -1,42 +1,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import {format} from 'date-fns';
 import Breadcrumb from '@/components/breadcrumb';
 import Layout from '@/components/layout';
 import styles from '@/styles/orderDetail.module.css';
+import {getOrder} from '@/api';
+import {getStatusColor} from '@/helpers';
 
-export default function Order({params: {id}}: {params: {id: string}}) {
-  const order = {
-    id,
-    date: '2023-06-20',
-    customerName: 'John Doe',
-    shippingAddress: '123 Main St, Anytown, USA',
-    billingAddress: '123 Main St, Anytown, USA',
-    items: [
-      {
-        name: 'Apple MacBook Pro 13-inch',
-        quantity: 1,
-        price: 1299,
-        imageUrl:
-          'https://m.media-amazon.com/images/I/61lsexTCOhL._AC_SX679_.jpg',
-      },
-      {
-        name: 'Samsung Galaxy S21',
-        quantity: 2,
-        price: 799,
-        imageUrl:
-          'https://m.media-amazon.com/images/I/61lsexTCOhL._AC_SX679_.jpg',
-      },
-    ],
-    status: 'Completed',
-    paymentMethod: 'Credit Card',
-    totalAmount: 2897,
-    paymentStatus: 'Paid',
-    shippingMethod: 'Standard Shipping',
-    trackingNumber: '123456789',
-    estimatedDelivery: '2023-06-25',
-  };
+export const revalidate = 0;
 
-  const subTotal = order.items.reduce((acc, item) => acc + item.price, 0);
+export default async function Order({params: {id}}: {params: {id: string}}) {
+  const order = await getOrder(id);
+
+  const subTotal = order.items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
 
   return (
     <Layout
@@ -56,23 +35,23 @@ export default function Order({params: {id}}: {params: {id: string}}) {
             className={styles.packageIcon}
           />
           <h1>Order #{order.id}</h1>
-          <div className={`${styles.status} ${styles.completed}`}>
-            Completed
+          <div className={`${styles.status} ${getStatusColor(order.status)}`}>
+            {order.status}
           </div>
-
-          <button className={styles.deleteOrder} title="Delete order">
-            <Image src="/trash.svg" alt="delete order" width={18} height={18} />
-          </button>
         </section>
 
         <section className={styles.deliveryDetailsContainer}>
           <div className={styles.deliveryDetails}>
             <p className={styles.orderSmallText}>Order Date</p>
-            <p className={styles.orderLargeText}>Sept 20, 2023</p>
+            <p className={styles.orderLargeText}>
+              {format(new Date(order.createdAt), 'MMM dd, yyyy')}
+            </p>
           </div>
           <div className={styles.deliveryDetails}>
             <p className={styles.orderSmallText}>Delivery Date</p>
-            <p className={styles.orderLargeText}>Sept 20, 2023</p>
+            <p className={styles.orderLargeText}>
+              {format(new Date(order.estimatedDelivery), 'MMM dd, yyyy')}
+            </p>
           </div>
           <div className={styles.deliveryDetails}>
             <p className={styles.orderSmallText}>Courier</p>
@@ -83,7 +62,7 @@ export default function Order({params: {id}}: {params: {id: string}}) {
           </div>
           <div className={styles.deliveryDetails}>
             <p className={styles.orderSmallText}>Address</p>
-            <p className={styles.orderLargeText}>{order.shippingAddress}</p>
+            <p className={styles.orderLargeText}>{order.billingAddress}</p>
           </div>
         </section>
 
@@ -97,11 +76,15 @@ export default function Order({params: {id}}: {params: {id: string}}) {
             </div>
             <div className={styles.orderSummaryItem}>
               <p>Discount</p>
-              <h3>$0</h3>
+              <h3>${order.discount.toLocaleString()}</h3>
             </div>
             <div className={styles.orderSummaryItem}>
               <p>Shipping</p>
-              <h3>${(100.45).toLocaleString()}</h3>
+              <h3>${order.shippingFee.toLocaleString()}</h3>
+            </div>
+            <div className={styles.orderSummaryItem}>
+              <p>VAT</p>
+              <h3>${order.tax.toLocaleString()}</h3>
             </div>
             <div className={styles.orderSummaryItem}>
               <p>Total Amount</p>
@@ -122,6 +105,7 @@ export default function Order({params: {id}}: {params: {id: string}}) {
                     alt={item.name}
                     width={120}
                     height={75}
+                    className={styles.itemImage}
                   />
                   <p className={styles.itemName}>{item.name}</p>
                 </div>
