@@ -226,3 +226,30 @@
 .datePickerError {
   margin-top: 8px;
 }
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .createOrderFormTitle {
+    font-size: 1rem;
+  }
+
+  .resetOrder {
+    font-size: 0.8125rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 1280px) {
+  .createOrderContainer {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .createOrderForm,
+  .createOrderSummary {
+    width: 100%;
+  }
+}

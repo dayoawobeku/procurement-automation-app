@@ -40,8 +40,12 @@ export default function Layout({
       </aside>
       <div className={styles.content}>
         <header className={styles.header}>
-          {breadcrumb}
+          <div className={styles.breadcrumbContainer}>{breadcrumb}</div>
 
+          <div className={styles.mobileHeader}>
+            <Link href="/dashboard">Dashboard</Link>|
+            <Link href="/orders">Orders</Link>
+          </div>
           <Image src="/avatar.png" alt="user" width={32} height={32} />
         </header>
         <main className={styles.main}>{children}</main>

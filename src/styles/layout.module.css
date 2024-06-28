@@ -17,6 +17,12 @@
   border-right: 1px solid hsla(0, 0%, 100%, 0.1);
 }
 
+.mobileHeader {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
 .nav {
   list-style: none;
   padding: 0;
@@ -83,4 +89,25 @@
 .main {
   padding: 1rem 1.5rem;
   margin-top: 8px;
+}
+
+@media (min-width: 768px) {
+  .mobileHeader {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .breadcrumbContainer {
+    display: none;
+  }
+
+  .main {
+    padding: 1rem;
+    margin-top: 0px;
+  }
 }

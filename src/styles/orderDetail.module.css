@@ -65,6 +65,7 @@
 .deliveryDetailsContainer {
   display: flex;
   gap: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .deliveryDetails {
@@ -217,4 +218,10 @@
 .orderActions a.secondary:hover {
   background: hsla(0, 0%, 100%, 0.3);
   transition: background 0.2s;
+}
+
+@media (max-width: 768px) {
+  .orderDetail h1 {
+    font-size: 1rem;
+  }
 }

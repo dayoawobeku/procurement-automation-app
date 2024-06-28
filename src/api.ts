@@ -93,7 +93,12 @@ export async function createOrder(order: Order): Promise<Order> {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create order');
+      const errorResponse = await response.json();
+      if (errorResponse.error) {
+        throw new Error(errorResponse.error);
+      } else {
+        throw new Error('Failed to create order');
+      }
     }
 
     return response.json();
@@ -115,7 +120,12 @@ export async function updateOrder(id: string, order: Order): Promise<Order> {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to update order');
+      const errorResponse = await response.json();
+      if (errorResponse.error) {
+        throw new Error(errorResponse.error);
+      } else {
+        throw new Error('Failed to update order');
+      }
     }
 
     return response.json();

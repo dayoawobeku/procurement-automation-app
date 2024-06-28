@@ -48,6 +48,7 @@
   margin-top: 1rem;
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .buttonGroup button {
@@ -214,4 +215,18 @@
 .notificationTime {
   font-size: 0.8125rem;
   color: hsla(0, 0%, 100%, 0.5);
+}
+
+@media (max-width: 768px) {
+  .productImage {
+    display: none;
+  }
+
+  .ordersGroup {
+    padding: 0;
+  }
+
+  .orderTotal {
+    font-size: 1rem;
+  }
 }
