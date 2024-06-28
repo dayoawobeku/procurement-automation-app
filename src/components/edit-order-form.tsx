@@ -189,15 +189,16 @@ export default function EditOrderForm({
               <div key={item.id} className={styles.itemContainer}>
                 <div className={styles.grid}>
                   <label
-                    htmlFor={`items[${index}].name`}
+                    htmlFor={`items.${index}.name`}
                     className={styles.createOrderFormLabel}
                   >
                     Item name
                     <select
                       className={styles.createOrderFormInput}
-                      id={`items[${index}].name`}
+                      id={`items.${index}.name`}
                       {...register(`items.${index}.name`, {required: true})}
                       defaultValue="DEFAULT"
+                      data-testid={`items.${index}.name`}
                     >
                       <option value="DEFAULT" disabled>
                         Select an item
@@ -215,7 +216,7 @@ export default function EditOrderForm({
                     )}
                   </label>
                   <label
-                    htmlFor={`items[${index}].quantity`}
+                    htmlFor={`items.${index}.quantity`}
                     className={styles.createOrderFormLabel}
                   >
                     Quantity
@@ -227,6 +228,7 @@ export default function EditOrderForm({
                         valueAsNumber: true,
                       })}
                       id={`items.${index}.quantity`}
+                      data-testid={`items.${index}.quantity`}
                     />
                     {errors.items?.[index]?.quantity && (
                       <p className={styles.error} role="alert">

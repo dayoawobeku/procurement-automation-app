@@ -3,6 +3,8 @@ import Layout from '@/components/layout';
 import CreateOrderForm from '@/components/create-order-form';
 import {getItems} from '@/api';
 
+export const revalidate = 0;
+
 export default async function CreateOrder() {
   const items = await getItems();
 

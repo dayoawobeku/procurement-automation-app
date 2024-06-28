@@ -186,13 +186,13 @@ export default function CreateOrderForm({items}: {items: OrderItem[]}) {
               <div key={item.id} className={styles.itemContainer}>
                 <div className={styles.grid}>
                   <label
-                    htmlFor={`items[${index}].name`}
+                    htmlFor={`items.${index}.name`}
                     className={styles.createOrderFormLabel}
                   >
                     Item name
                     <select
                       className={styles.createOrderFormInput}
-                      id={`items[${index}].name`}
+                      id={`items.${index}.name`}
                       {...register(`items.${index}.name`, {required: true})}
                       defaultValue="DEFAULT"
                     >
@@ -212,7 +212,7 @@ export default function CreateOrderForm({items}: {items: OrderItem[]}) {
                     )}
                   </label>
                   <label
-                    htmlFor={`items[${index}].quantity`}
+                    htmlFor={`items.${index}.quantity`}
                     className={styles.createOrderFormLabel}
                   >
                     Quantity
