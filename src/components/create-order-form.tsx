@@ -183,7 +183,7 @@ export default function CreateOrderForm({items}: {items: OrderItem[]}) {
             </label>
 
             {fields.map((item, index) => (
-              <div key={item.id} className={styles.itemContainer}>
+              <div key={`${item.id}-${index}`} className={styles.itemContainer}>
                 <div className={styles.grid}>
                   <label
                     htmlFor={`items.${index}.name`}

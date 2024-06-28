@@ -39,7 +39,7 @@ export default async function Orders() {
               <td>{order.id}</td>
               <td>
                 {order.items.map((item, index) => (
-                  <span key={item.id}>
+                  <span key={`${item.id}-${index}`}>
                     {item.name} ({item.quantity})
                     {index < order.items.length - 1 && ', '}
                   </span>
